@@ -1,0 +1,19 @@
+{
+  "name": "grpc-node",
+  "version": "1.0.0",
+  "description": "grpc-node",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "gen:certs": "./scripts/gen_certs.sh",
+    "develop": "SERVER_PORT=50051 node index"
+  },
+  "author": "nhatvu148",
+  "license": "ISC",
+  "dependencies": {
+    "google-protobuf": "^3.17.3",
+    "grpc": "^1.24.10",
+    "knex": "^0.95.6",
+    "pg": "^8.6.0"
+  }
+}
