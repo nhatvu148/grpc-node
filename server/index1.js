@@ -168,6 +168,43 @@ async function greetEveryone(call, callback) {
   call.end();
 }
 
+// - FindMaximum - Solution
+function findMaximum(call, callback) {
+  var currentMaximum = 0;
+  var currentNumber = 0;
+
+  call.on("data", (request) => {
+    currentNumber = request.getNumber();
+
+    if (currentNumber > currentMaximum) {
+      currentMaximum = currentNumber;
+
+      var response = new calc.FindMaximumResponse();
+      response.setMaximum(currentMaximum);
+
+      call.write(response);
+    } else {
+      //do nothing
+    }
+
+    console.log("Streamed number: ", request.getNumber());
+  });
+
+  call.on("error", (error) => {
+    console.error(error);
+  });
+
+  call.on("end", () => {
+    var response = new calc.FindMaximumResponse();
+    response.setMaximum(currentMaximum);
+
+    call.write(response);
+
+    call.end();
+    console.log("The end!");
+  });
+}
+
 const main = () => {
   const server = new grpc.Server();
 
@@ -175,6 +212,7 @@ const main = () => {
     sum: sum,
     primeNumberDecomposition: primeNumberDecomposition,
     computeAverage: computeAverage,
+    greetEveryone: greetEveryone,
   });
 
   server.addService(service.GreetServiceService, {

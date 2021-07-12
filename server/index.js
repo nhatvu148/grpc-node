@@ -26,8 +26,8 @@ const knex = require("knex")(config);
 
 function listBlog(call, callback) {
   console.log("Received list blog request");
-  knex("blogs").then(data => {
-    data.forEach(element => {
+  knex("blogs").then((data) => {
+    data.forEach((element) => {
       var blog = new blogs.Blog();
       blog.setId(element.id);
       blog.setAuthor(element.author);
@@ -57,7 +57,7 @@ function createBlog(call, callback) {
     .insert({
       author: blog.getAuthor(),
       title: blog.getTitle(),
-      content: blog.getContent()
+      content: blog.getContent(),
     })
     .then(() => {
       var id = blog.getId();
@@ -88,7 +88,7 @@ function readBlog(call, callback) {
 
   knex("blogs")
     .where({ id: parseInt(blogId) })
-    .then(data => {
+    .then((data) => {
       console.log("Searching for a blog...");
 
       if (data.length) {
@@ -110,7 +110,7 @@ function readBlog(call, callback) {
         console.log("Blog not found");
         return callback({
           code: grpc.status.NOT_FOUND,
-          message: "Blog Not found!"
+          message: "Blog Not found!",
         });
       }
     });
@@ -128,10 +128,10 @@ function updateBlog(call, callback) {
     .update({
       author: call.request.getBlog().getAuthor(),
       title: call.request.getBlog().getTitle(),
-      content: call.request.getBlog().getContent()
+      content: call.request.getBlog().getContent(),
     })
     .returning()
-    .then(data => {
+    .then((data) => {
       if (data) {
         var blog = new blogs.Blog();
 
@@ -152,7 +152,7 @@ function updateBlog(call, callback) {
       } else {
         return callback({
           code: grpc.status.NOT_FOUND,
-          message: "Blog with the corresponding id was not found"
+          message: "Blog with the corresponding id was not found",
         });
       }
     });
@@ -167,7 +167,7 @@ function deleteBlog(call, callback) {
     .where({ id: parseInt(blogId) })
     .delete()
     .returning()
-    .then(data => {
+    .then((data) => {
       console.log("Blog deleting...");
 
       if (data) {
@@ -185,7 +185,7 @@ function deleteBlog(call, callback) {
 
         return callback({
           code: grpc.status.NOT_FOUND,
-          message: "Blog with the corresponding id was not found"
+          message: "Blog with the corresponding id was not found",
         });
       }
     });
@@ -204,7 +204,7 @@ function greetManyTimes(call, callback) {
   var firstName = call.request.getGreeting().getFirstName();
 
   let count = 0,
-    intervalID = setInterval(function() {
+    intervalID = setInterval(function () {
       var greetManyTimesResponse = new greets.GreetManyTimesResponse();
       greetManyTimesResponse.setResult(firstName);
 
@@ -226,7 +226,8 @@ function primeNumberDecomposition(call, callback) {
 
   while (number > 1) {
     if (number % divisor === 0) {
-      var primeNumberDecompositionResponse = new calc.PrimeNumberDecompositionResponse();
+      var primeNumberDecompositionResponse =
+        new calc.PrimeNumberDecompositionResponse();
 
       primeNumberDecompositionResponse.setPrimeFactor(divisor);
 
@@ -244,7 +245,7 @@ function primeNumberDecomposition(call, callback) {
 }
 
 function longGreet(call, callback) {
-  call.on("data", request => {
+  call.on("data", (request) => {
     var fullName =
       request.getGreet().getFirstName() +
       " " +
@@ -253,7 +254,7 @@ function longGreet(call, callback) {
     console.log("Hello " + fullName);
   });
 
-  call.on("error", error => {
+  call.on("error", (error) => {
     console.error(error);
   });
 
@@ -270,7 +271,7 @@ function computeAverage(call, callback) {
   var sum = 0;
   var count = 0;
 
-  call.on("data", request => {
+  call.on("data", (request) => {
     // increment sum
     sum += request.getNumber();
 
@@ -279,7 +280,7 @@ function computeAverage(call, callback) {
     // increment count
     count += 1;
   });
-  call.on("error", error => {
+  call.on("error", (error) => {
     console.log(error);
   });
 
@@ -295,7 +296,7 @@ function computeAverage(call, callback) {
   });
 }
 async function sleep(interval) {
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     setTimeout(() => resolve(), interval);
   });
 }
@@ -305,7 +306,7 @@ function findMaximum(call, callback) {
   var currentMaximum = 0;
   var currentNumber = 0;
 
-  call.on("data", request => {
+  call.on("data", (request) => {
     currentNumber = request.getNumber();
 
     if (currentNumber > currentMaximum) {
@@ -322,7 +323,7 @@ function findMaximum(call, callback) {
     console.log("Streamed number: ", request.getNumber());
   });
 
-  call.on("error", error => {
+  call.on("error", (error) => {
     console.error(error);
   });
 
@@ -337,7 +338,7 @@ function findMaximum(call, callback) {
   });
 }
 async function greetEveryone(call, callback) {
-  call.on("data", response => {
+  call.on("data", (response) => {
     var fullName =
       response.getGreet().getFirstName() +
       " " +
@@ -346,7 +347,7 @@ async function greetEveryone(call, callback) {
     console.log("Hello " + fullName);
   });
 
-  call.on("error", error => {
+  call.on("error", (error) => {
     console.error(error);
   });
 
@@ -396,9 +397,44 @@ function squareRoot(call, callback) {
     return callback({
       code: grpc.status.INVALID_ARGUMENT,
       message:
-        "The number being sent is not positive " + " Number sent: " + number
+        "The number being sent is not positive " + " Number sent: " + number,
     });
   }
+}
+
+async function callBiDiFindMaximum() {
+  // Created our server client
+  console.log("hello I'm a gRPC Client");
+
+  var client = new calcService.CalculatorServiceClient(
+    "localhost:50051",
+    grpc.credentials.createInsecure()
+  );
+
+  var call = client.findMaximum(request, (error, response) => {});
+
+  call.on("data", (response) => {
+    console.log("Got new Max from Server => " + response.getMaximum());
+  });
+  call.on("error", (error) => {
+    console.error(error);
+  });
+
+  call.on("end", () => {
+    console.log("Server is completed sending messages");
+  });
+
+  // data
+  let data = [3, 5, 17, 9, 8, 30, 12, 345, 129, 0];
+  for (var i = 0; i < data.length; i++) {
+    var request = new calc.FindMaximumRequest();
+    console.log("Sending number: " + data[i]);
+
+    request.setNumber(data[i]);
+    call.write(request);
+    await sleep(1000);
+  }
+  call.end(); // we are done sending messages
 }
 
 function main() {
@@ -407,8 +443,8 @@ function main() {
     [
       {
         cert_chain: fs.readFileSync("../certs/server.crt"),
-        private_key: fs.readFileSync("../certs/server.key")
-      }
+        private_key: fs.readFileSync("../certs/server.key"),
+      },
     ],
     true
   );
@@ -422,7 +458,7 @@ function main() {
     createBlog: createBlog,
     readBlog: readBlog,
     updateBlog: updateBlog,
-    deleteBlog: deleteBlog
+    deleteBlog: deleteBlog,
   });
 
   server.addService(calcService.CalculatorServiceService, {
@@ -430,14 +466,15 @@ function main() {
     primeNumberDecomposition: primeNumberDecomposition,
     computeAverage: computeAverage,
     findMaximum: findMaximum,
-    squareRoot: squareRoot
+    squareRoot: squareRoot,
+    callBiDiFindMaximum: callBiDiFindMaximum,
   });
 
   server.addService(service.GreetServiceService, {
     greet: greet,
     greetManyTimes: greetManyTimes,
     longGreet: longGreet,
-    greetEveryone: greetEveryone
+    greetEveryone: greetEveryone,
   });
   server.bind("127.0.0.1:50051", unsafeCreds);
   server.start();
