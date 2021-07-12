@@ -118,15 +118,15 @@ function callLongGreeting() {
 
       var request = new greets.LongGreetRequest();
       var greeting = new greets.Greeting();
-      greeting.setFirstName("Paulo");
-      greeting.setLastName("Dichone");
+      greeting.setFirstName("Fuad");
+      greeting.setLastName("Akbar");
 
       request.setGreet(greeting);
 
       var requestTwo = new greets.LongGreetRequest();
       var greetingTwo = new greets.Greeting();
-      greetingTwo.setFirstName("Stephane");
-      greetingTwo.setLastName("Maarek");
+      greetingTwo.setFirstName("Nhat");
+      greetingTwo.setLastName("Vu");
 
       requestTwo.setGreet(greetingTwo);
 
@@ -171,8 +171,58 @@ function callPrimeNumberDecomposition() {
   });
 }
 
+function callComputeAverage() {
+  var client = new calcService.CalculatorServiceClient(
+    "localhost:50051",
+    grpc.credentials.createInsecure()
+  );
+
+  var request = new calc.ComputeAverageRequest();
+
+  var call = client.computeAverage(request, (error, response) => {
+    if (!error) {
+      console.log(
+        "Received a response from the server - Average: " +
+          response.getAverage()
+      );
+    } else {
+      console.error(error);
+    }
+  });
+
+  var request = new calc.ComputeAverageRequest();
+  // request.setNumber(1)
+
+  for (var i = 0; i < 1000000; i++) {
+    var request = new calc.ComputeAverageRequest();
+    request.setNumber(i);
+    call.write(request);
+  }
+
+  call.end();
+
+  // var requestTwo = new calc.ComputeAverageRequest()
+  // requestTwo.setNumber(2)
+
+  // var requestThree = new calc.ComputeAverageRequest()
+  // requestThree.setNumber(3)
+
+  // var requestFour = new calc.ComputeAverageRequest()
+  // requestFour.setNumber(4)
+
+  // average should be 2.5
+
+  //  call.write(request)
+  //  call.write(requestTwo)
+  //  call.write(requestThree)
+  //  call.write(requestFour)
+
+  //  call.end() // we are done sending messages
+}
+
 const main = () => {
-  callLongGreeting();
+  callComputeAverage();
+  // callLongGreeting();
   // callPrimeNumberDecomposition();
   // callGreetManyTimes();
   // callGreetings();
