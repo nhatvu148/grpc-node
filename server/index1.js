@@ -205,6 +205,25 @@ function findMaximum(call, callback) {
   });
 }
 
+function squareRoot(call, callback) {
+  var number = call.request.getNumber();
+
+  if (number >= 0) {
+    var numberRoot = Math.sqrt(number);
+    var response = new calc.SquareRootResponse();
+    response.setNumberRoot(numberRoot);
+
+    callback(null, response);
+  } else {
+    // Error handling
+    return callback({
+      code: grpc.status.INVALID_ARGUMENT,
+      message:
+        "The number being sent is not positive " + " Number sent: " + number,
+    });
+  }
+}
+
 const main = () => {
   const server = new grpc.Server();
 

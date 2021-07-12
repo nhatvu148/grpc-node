@@ -468,6 +468,7 @@ function main() {
     findMaximum: findMaximum,
     squareRoot: squareRoot,
     callBiDiFindMaximum: callBiDiFindMaximum,
+    squareRoot: squareRoot,
   });
 
   server.addService(service.GreetServiceService, {

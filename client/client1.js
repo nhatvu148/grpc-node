@@ -267,8 +267,56 @@ async function callBiDirect() {
   call.end();
 }
 
+function getRPCDeadline(rpcType) {
+  timeAllowed = 5000;
+
+  switch (rpcType) {
+    case 1:
+      timeAllowed = 10;
+      break;
+
+    case 2:
+      timeAllowed = 7000;
+      break;
+
+    default:
+      console.log("Invalid RPC Type: Using Default Timeout");
+  }
+
+  return new Date(Date.now() + timeAllowed);
+}
+
+function doErrorCall() {
+  var deadline = getRPCDeadline(1);
+
+  // Created our server client
+  console.log("hello I'm a gRPC Client");
+
+  var client = new calcService.CalculatorServiceClient(
+    "localhost:50051",
+    grpc.credentials.createInsecure()
+  );
+
+  var number = -1;
+  var squareRootRequest = new calc.SquareRootRequest();
+  squareRootRequest.setNumber(number);
+
+  client.squareRoot(
+    squareRootRequest,
+    { deadline: deadline },
+    (error, response) => {
+      if (!error) {
+        console.log("Square root is ", response.getNumberRoot());
+      } else {
+        console.log(error.message);
+      }
+    }
+  );
+}
+
 const main = async () => {
-  await callBiDirect();
+  doErrorCall();
+  // await callBiDirect();
   // callComputeAverage();
   // callLongGreeting();
   // callPrimeNumberDecomposition();
