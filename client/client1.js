@@ -10,7 +10,7 @@ const callGreetings = () => {
   console.log("Hello from Client!");
   const client = new service.GreetServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure(),
+    grpc.credentials.createInsecure()
   );
 
   // create our request
@@ -36,7 +36,7 @@ const callGreetings = () => {
 const callSum = () => {
   const client = new calcService.CalculatorServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure(),
+    grpc.credentials.createInsecure()
   );
 
   const sumRequest = new calc.SumRequest();
@@ -47,8 +47,11 @@ const callSum = () => {
   client.sum(sumRequest, (error, response) => {
     if (!error) {
       console.log(
-        sumRequest.getFirstNumber() + " + " + sumRequest.getSecondNumber() +
-          " = " + response.getSumResult(),
+        sumRequest.getFirstNumber() +
+          " + " +
+          sumRequest.getSecondNumber() +
+          " = " +
+          response.getSumResult()
       );
     } else {
       console.error(error);
@@ -56,9 +59,46 @@ const callSum = () => {
   });
 };
 
+function callGreetManyTimes() {
+  // Created our server client
+  var client = new service.GreetServiceClient(
+    "localhost:50051",
+    grpc.credentials.createInsecure()
+  );
+
+  // create request
+
+  var request = new greets.GreetManyTimesRequest();
+
+  var greeting = new greets.Greeting();
+  greeting.setFirstName("Nhat");
+  greeting.setLastName("Vu");
+
+  request.setGreeting(greeting);
+
+  var call = client.greetManyTimes(request, () => {});
+
+  call.on("data", (response) => {
+    console.log("Client Streaming Response: ", response.getResult());
+  });
+
+  call.on("status", (status) => {
+    console.log(status.details);
+  });
+
+  call.on("error", (error) => {
+    console.error(error.details);
+  });
+
+  call.on("end", () => {
+    console.log("Streaming Ended!");
+  });
+}
+
 const main = () => {
-  callGreetings();
-  callSum();
+  callGreetManyTimes();
+  // callGreetings();
+  // callSum();
 };
 
 main();
