@@ -117,7 +117,7 @@ function deserialize_calculator_SumResponse(buffer_arg) {
 
 var CalculatorServiceService = exports.CalculatorServiceService = {
   // Unary API
-  sum: {
+sum: {
     path: '/calculator.CalculatorService/Sum',
     requestStream: false,
     responseStream: false,
@@ -129,7 +129,7 @@ var CalculatorServiceService = exports.CalculatorServiceService = {
     responseDeserialize: deserialize_calculator_SumResponse,
   },
   // Streaming API
-  primeNumberDecomposition: {
+primeNumberDecomposition: {
     path: '/calculator.CalculatorService/PrimeNumberDecomposition',
     requestStream: false,
     responseStream: true,
@@ -163,8 +163,8 @@ var CalculatorServiceService = exports.CalculatorServiceService = {
     responseDeserialize: deserialize_calculator_FindMaximumResponse,
   },
   // error handling
-  // this RPC wil throw an exception if the sent number is negative: -1
-  squareRoot: {
+// this RPC wil throw an exception if the sent number is negative: -1
+squareRoot: {
     path: '/calculator.CalculatorService/SquareRoot',
     requestStream: false,
     responseStream: false,

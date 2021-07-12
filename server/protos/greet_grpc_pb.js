@@ -95,7 +95,7 @@ function deserialize_greet_LongGreetResponse(buffer_arg) {
 
 var GreetServiceService = exports.GreetServiceService = {
   // unary API
-  greet: {
+greet: {
     path: '/greet.GreetService/Greet',
     requestStream: false,
     responseStream: false,
@@ -107,7 +107,7 @@ var GreetServiceService = exports.GreetServiceService = {
     responseDeserialize: deserialize_greet_GreetResponse,
   },
   // Server streaming API
-  greetManyTimes: {
+greetManyTimes: {
     path: '/greet.GreetService/GreetManyTimes',
     requestStream: false,
     responseStream: true,
@@ -119,7 +119,7 @@ var GreetServiceService = exports.GreetServiceService = {
     responseDeserialize: deserialize_greet_GreetManyTimesResponse,
   },
   // Client Streaming
-  longGreet: {
+longGreet: {
     path: '/greet.GreetService/LongGreet',
     requestStream: true,
     responseStream: false,
@@ -131,7 +131,7 @@ var GreetServiceService = exports.GreetServiceService = {
     responseDeserialize: deserialize_greet_LongGreetResponse,
   },
   // BiDi Streaming
-  greetEveryone: {
+greetEveryone: {
     path: '/greet.GreetService/GreetEveryone',
     requestStream: true,
     responseStream: true,

@@ -315,8 +315,8 @@ function doErrorCall() {
 }
 
 const main = async () => {
-  doErrorCall();
-  // await callBiDirect();
+  // doErrorCall();
+  await callBiDirect();
   // callComputeAverage();
   // callLongGreeting();
   // callPrimeNumberDecomposition();
