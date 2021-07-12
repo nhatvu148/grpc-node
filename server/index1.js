@@ -77,6 +77,28 @@ function primeNumberDecomposition(call, callback) {
   call.end(); // all messages sent! we are done
 }
 
+function longGreet(call, callback) {
+  call.on("data", (request) => {
+    var fullName =
+      request.getGreet().getFirstName() +
+      " " +
+      request.getGreet().getLastName();
+
+    console.log("Hello " + fullName);
+  });
+
+  call.on("error", (error) => {
+    console.error(error);
+  });
+
+  call.on("end", () => {
+    var response = new greets.LongGreetResponse();
+    response.setResult("Long Greet Client Streaming.....");
+
+    callback(null, response);
+  });
+}
+
 const main = () => {
   const server = new grpc.Server();
 
@@ -88,6 +110,7 @@ const main = () => {
   server.addService(service.GreetServiceService, {
     greet: greet,
     greetManyTimes: greetManyTimes,
+    longGreet: longGreet,
   });
 
   server.bind("127.0.0.1:50051", grpc.ServerCredentials.createInsecure());
