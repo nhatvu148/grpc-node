@@ -129,6 +129,45 @@ function computeAverage(call, callback) {
   });
 }
 
+async function sleep(interval) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), interval);
+  });
+}
+
+async function greetEveryone(call, callback) {
+  call.on("data", (response) => {
+    var fullName =
+      response.getGreet().getFirstName() +
+      " " +
+      response.getGreet().getLastName();
+
+    console.log("Hello " + fullName);
+  });
+
+  call.on("error", (error) => {
+    console.error(error);
+  });
+
+  call.on("end", () => {
+    console.log("Server The End...");
+  });
+
+  for (var i = 0; i < 10; i++) {
+    // var greeting = new greets.Greeting()
+    // greeting.setFirstName('Paulo')
+    // greeting.setLastName('Dichone')
+
+    var request = new greets.GreetEveryoneResponse();
+    request.setResult("Nhat Vu");
+
+    call.write(request);
+    await sleep(1000);
+  }
+
+  call.end();
+}
+
 const main = () => {
   const server = new grpc.Server();
 
@@ -142,6 +181,7 @@ const main = () => {
     greet: greet,
     greetManyTimes: greetManyTimes,
     longGreet: longGreet,
+    greetEveryone: greetEveryone,
   });
 
   server.bind("127.0.0.1:50051", grpc.ServerCredentials.createInsecure());
