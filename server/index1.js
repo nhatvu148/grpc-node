@@ -50,10 +50,40 @@ function greetManyTimes(call, callback) {
     }, 1000);
 }
 
+//primeFactor -
+function primeNumberDecomposition(call, callback) {
+  var number = call.request.getNumber();
+  var divisor = 2;
+
+  console.log("Received number: ", number);
+
+  while (number > 1) {
+    if (number % divisor === 0) {
+      var primeNumberDecompositionResponse =
+        new calc.PrimeNumberDecompositionResponse();
+
+      primeNumberDecompositionResponse.setPrimeFactor(divisor);
+
+      number = number / divisor;
+
+      //write the message using call.write()
+      call.write(primeNumberDecompositionResponse);
+    } else {
+      divisor++;
+      console.log("Divisor has increased to ", divisor);
+    }
+  }
+
+  call.end(); // all messages sent! we are done
+}
+
 const main = () => {
   const server = new grpc.Server();
 
-  server.addService(calcService.CalculatorServiceService, { sum: sum });
+  server.addService(calcService.CalculatorServiceService, {
+    sum: sum,
+    primeNumberDecomposition: primeNumberDecomposition,
+  });
 
   server.addService(service.GreetServiceService, {
     greet: greet,

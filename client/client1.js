@@ -95,8 +95,40 @@ function callGreetManyTimes() {
   });
 }
 
+function callPrimeNumberDecomposition() {
+  var client = new calcService.CalculatorServiceClient(
+    "localhost:50051",
+    grpc.credentials.createInsecure()
+  );
+
+  var request = new calc.PrimeNumberDecompositionRequest();
+
+  var number = 567890; //12
+
+  request.setNumber(number);
+
+  var call = client.primeNumberDecomposition(request, () => {});
+
+  call.on("data", (response) => {
+    console.log("Prime Factors Found: ", response.getPrimeFactor());
+  });
+
+  call.on("error", (error) => {
+    console.error(error);
+  });
+
+  call.on("status", (status) => {
+    console.log(status);
+  });
+
+  call.on("end", () => {
+    console.log("Streaming Ended!");
+  });
+}
+
 const main = () => {
-  callGreetManyTimes();
+  callPrimeNumberDecomposition();
+  // callGreetManyTimes();
   // callGreetings();
   // callSum();
 };
