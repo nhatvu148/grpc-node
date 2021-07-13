@@ -46,3 +46,9 @@ Windows:
 
 - https://github.com/ktr0731/evans
 - evans protos/greet.proto
+
+# References:
+
+- https://github.com/googleapis/googleapis/blob/master/google/pubsub/v1/pubsub.proto
+- https://github.com/googleapis/googleapis/blob/master/google/spanner/v1/spanner.proto
+- https://github.com/grpc-ecosystem/grpc-gateway
