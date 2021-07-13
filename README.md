@@ -41,3 +41,8 @@ Windows:
 - ../node_modules/.bin/knex migrate:latest
 - ../node_modules/.bin/knex seed:make blogs
 - ../node_modules/.bin/knex seed:run
+
+# Evans CLI:
+
+- https://github.com/ktr0731/evans
+- evans protos/greet.proto
