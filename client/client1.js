@@ -4,13 +4,106 @@ const service = require("../server/protos/greet_grpc_pb");
 const calc = require("../server/protos/calculator_pb");
 const calcService = require("../server/protos/calculator_grpc_pb");
 
+var blogs = require("../server/protos/blog_pb");
+var blogService = require("../server/protos/blog_grpc_pb");
+
 const grpc = require("grpc");
+let unsafCreds = grpc.credentials.createInsecure();
+
+function callListBlogs() {
+  var client = new blogService.BlogServiceClient("localhost:50051", unsafCreds);
+
+  var emptyBlogRequest = new blogs.ListBlogRequest();
+  var call = client.listBlog(emptyBlogRequest, () => {});
+
+  call.on("data", (response) => {
+    console.log("Client Streaming Response ", response.getBlog().toString());
+  });
+
+  call.on("error", (error) => {
+    console.error(error);
+  });
+
+  call.on("end", () => {
+    console.log("End");
+  });
+}
+
+function callCreateBlog() {
+  var client = new blogService.BlogServiceClient("localhost:50051", unsafCreds);
+
+  var blog = new blogs.Blog();
+  blog.setAuthor("Bond");
+  blog.setTitle("Bond.. blog post");
+  blog.setContent("This is okay...");
+
+  var blogRequest = new blogs.CreateBlogRequest();
+  blogRequest.setBlog(blog);
+
+  client.createBlog(blogRequest, (error, response) => {
+    if (!error) {
+      console.log("Received create blog response,", response.toString());
+    } else {
+      console.error(error);
+    }
+  });
+}
+
+function callReadBlog() {}
+function callUpdateBlog() {
+  var client = new blogService.BlogServiceClient("localhost:50051", unsafCreds);
+
+  var updateBlogRequest = new blogs.UpdateBlogRequest();
+
+  var newBlog = new blogs.Blog();
+
+  newBlog.setId("10");
+  newBlog.setAuthor("James Bond now");
+  newBlog.setTitle("Hello Up to date");
+  newBlog.setContent("This is great, again!");
+
+  updateBlogRequest.setBlog(newBlog);
+
+  console.log("Blog...", newBlog.toString());
+
+  client.updateBlog(updateBlogRequest, (error, response) => {
+    if (!error) {
+    } else {
+      if (error.code === grpc.status.NOT_FOUND) {
+        console.log("NOt found");
+      } else {
+        ///do more...
+      }
+    }
+  });
+}
+
+function callDeleteBlog() {
+  var client = new blogService.BlogServiceClient("localhost:50051", unsafCreds);
+
+  var deleteBlogRequest = new blogs.DeleteBlogRequest();
+  var blogId = "7";
+
+  deleteBlogRequest.setBlogId(blogId);
+
+  client.deleteBlog(deleteBlogRequest, (error, response) => {
+    if (!error) {
+      console.log("Deleted blog with id: ", response.toString());
+    } else {
+      if (error.code === grpc.status.NOT_FOUND) {
+        console.log("Not Found");
+      } else {
+        console.log("Sorry something went wrong");
+      }
+    }
+  });
+}
 
 const callGreetings = () => {
   console.log("Hello from Client!");
   const client = new service.GreetServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    grpc.credentials.createInsecure(),
   );
 
   // create our request
@@ -36,7 +129,7 @@ const callGreetings = () => {
 const callSum = () => {
   const client = new calcService.CalculatorServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    unsafCreds,
   );
 
   const sumRequest = new calc.SumRequest();
@@ -51,7 +144,7 @@ const callSum = () => {
           " + " +
           sumRequest.getSecondNumber() +
           " = " +
-          response.getSumResult()
+          response.getSumResult(),
       );
     } else {
       console.error(error);
@@ -63,7 +156,7 @@ function callGreetManyTimes() {
   // Created our server client
   var client = new service.GreetServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    unsafCreds,
   );
 
   // create request
@@ -99,7 +192,7 @@ function callLongGreeting() {
   // Created our server client
   var client = new service.GreetServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    unsafCreds,
   );
 
   var request = new greets.LongGreetRequest();
@@ -143,7 +236,7 @@ function callLongGreeting() {
 function callPrimeNumberDecomposition() {
   var client = new calcService.CalculatorServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    unsafCreds,
   );
 
   var request = new calc.PrimeNumberDecompositionRequest();
@@ -174,7 +267,7 @@ function callPrimeNumberDecomposition() {
 function callComputeAverage() {
   var client = new calcService.CalculatorServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    unsafCreds,
   );
 
   var request = new calc.ComputeAverageRequest();
@@ -183,7 +276,7 @@ function callComputeAverage() {
     if (!error) {
       console.log(
         "Received a response from the server - Average: " +
-          response.getAverage()
+          response.getAverage(),
       );
     } else {
       console.error(error);
@@ -232,7 +325,7 @@ async function callBiDirect() {
 
   var client = new service.GreetServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    unsafCreds,
   );
 
   var call = client.greetEveryone(request, (error, response) => {
@@ -294,7 +387,7 @@ function doErrorCall() {
 
   var client = new calcService.CalculatorServiceClient(
     "localhost:50051",
-    grpc.credentials.createInsecure()
+    unsafCreds,
   );
 
   var number = -1;
@@ -310,13 +403,18 @@ function doErrorCall() {
       } else {
         console.log(error.message);
       }
-    }
+    },
   );
 }
 
 const main = async () => {
+  // callDeleteBlog();
+  // callUpdateBlog();
+  // callReadBlog();
+  // callCreateBlog();
+  callListBlogs();
   // doErrorCall();
-  await callBiDirect();
+  // await callBiDirect();
   // callComputeAverage();
   // callLongGreeting();
   // callPrimeNumberDecomposition();
