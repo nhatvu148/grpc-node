@@ -75,7 +75,7 @@ function callUpdateBlog() {
 
   var newBlog = new blogs.Blog();
 
-  newBlog.setId("10");
+  newBlog.setId("4");
   newBlog.setAuthor("James Bond now");
   newBlog.setTitle("Hello Up to date");
   newBlog.setContent("This is great, again!");
@@ -100,7 +100,7 @@ function callDeleteBlog() {
   var client = new blogService.BlogServiceClient("localhost:50051", unsafCreds);
 
   var deleteBlogRequest = new blogs.DeleteBlogRequest();
-  var blogId = "7";
+  var blogId = "4";
 
   deleteBlogRequest.setBlogId(blogId);
 
@@ -426,9 +426,9 @@ function doErrorCall() {
 }
 
 const main = async () => {
-  // callDeleteBlog();
+  callDeleteBlog();
   // callUpdateBlog();
-  callReadBlog();
+  // callReadBlog();
   // callCreateBlog();
   // callListBlogs();
   // doErrorCall();
